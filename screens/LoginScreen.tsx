@@ -24,8 +24,6 @@ const LoginScreen = ({navigation}) => {
   //バリデート関連用State
   const [store, dispatch_store] = useLoginReducer();
 
-  //アクセストークンの更新のタイミングで画面遷移
-
   const loadStorage = async () => {
     try {
       // react-native-storageにデータを格納
@@ -52,16 +50,14 @@ const LoginScreen = ({navigation}) => {
     }
   }, []);
 
-  const fetchData = async (email: string, password: string) => {
+  //login function
+  const fetchData = async (password: string) => {
     try {
       //login 処理
       //匿名ログイン処理
+      //firebase
     } catch (error) {
-      //通信失敗時の処理
       console.log('ログイン失敗:', error);
-
-      //失敗
-      //2.存在するアカウントでなければアラート
       dispatch({
         type: 'FAIL_AUTHENTICATION',
         payload: {
@@ -77,30 +73,13 @@ const LoginScreen = ({navigation}) => {
       <ScrollView scrollEnabled={false}>
         <KeyboardAvoidingView behavior="padding">
           <Text style={tailwind('text-lg font-bold text-center mt-8 mb-16')}>
-            ログイン
+            サインイン
           </Text>
-          <View style={tailwind('')}>
-            <CustomInput
-              title="メールアドレス"
-              placeholder="your_address@example.com"
-              value={store.user?.email ?? ''}
-              keyboardType={'email-address'}
-              onChangeText={text => {
-                dispatch_store({
-                  type: 'CHANGE_VALUE',
-                  data: {
-                    email: text,
-                    password: store.user?.password ?? '',
-                  },
-                });
-              }}
-            />
-          </View>
+          {/* 匿名ログイン */}
           <View style={tailwind('mb-2')}>
             <CustomInput
               title="パスワード"
               placeholder="小文字・大文字・数字を含めた8桁"
-              //?? typescript
               value={store.user?.password ?? ''}
               keyboardType={'visible-password'}
               onChangeText={text => {
@@ -108,7 +87,6 @@ const LoginScreen = ({navigation}) => {
                   type: 'CHANGE_VALUE',
                   data: {
                     password: text,
-                    email: store.user?.email ?? '',
                   },
                 });
               }}
@@ -127,11 +105,10 @@ const LoginScreen = ({navigation}) => {
 
           <CustomButton
             title="ログイン"
-            disabled={store.user?.email && store.user?.password ? false : true}
+            disabled={store.user?.password ? false : true}
             onPress={() => {
-              const email = store.user?.email ?? '';
               const password = store.user?.password ?? '';
-              //   fetchData(email, password);
+              fetchData(password);
             }}
           />
         </KeyboardAvoidingView>
