@@ -113,6 +113,62 @@ const VideoChatScreen = () => {
     });
   };
 
+  // twilioVideo connect
+  useEffect(() => {
+    if (!state.twilio?.token) {
+      twilioRef.current.connect({
+        roomName: state.twilio?.roomName,
+        accessToken: state.twilio?.token,
+        cameraType: 'front',
+      });
+
+      setStatus('connecting');
+      console.log(status);
+    }
+  }, []);
+
+  // start Timer
+  useEffect(() => {
+    handleStart();
+  }, []);
+
+  // reset Timer
+  useEffect(() => {
+    // component will unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const handleStart = () => {
+    const id = setInterval(() => {
+      setNow(new Date().getTime());
+    }, 100);
+    setIntervalId(id);
+    setStart(new Date().getTime());
+    setLaps([0]);
+  };
+
+  const Timer = ({interval}: any) => {
+    const pad = (n: number) => (n < 10 ? '0' + n : n);
+    const duration = new Date(interval);
+
+    return (
+      <View>
+        <View
+          style={tailwind(
+            ' flex flex-row justify-center items-center top-0 left-10 right-0',
+          )}>
+          <Text style={tailwind(' text-white font-bold text-lg text-center')}>
+            {pad(duration.getMinutes())}
+            {':'}
+          </Text>
+          <Text style={tailwind(' text-white font-bold text-lg text-center')}>
+            {pad(duration.getSeconds())}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View>
       <TwilioVideoParticipantView
