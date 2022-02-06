@@ -6,14 +6,14 @@ Twilioを利用したビデオ通話アプリケーション
 
 
 ### 使用技術
-*React Native
-*TypeScript
-*Twilio
+* React Native
+* TypeScript
+* Twilio
 
 ### 主な使用ライブラリ
-*react-native-callkeep
-*react-native-onesignal
-*react-native-vector-icons
+* react-native-callkeep
+* react-native-onesignal
+* react-native-vector-icons
 
 ## Twilio機能でビデオ通話を実装
 > 公式サイト `https://www.twilio.com/ja/docs/video`
