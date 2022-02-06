@@ -71,3 +71,12 @@ $ npx react-native run-android
 ```
 
 
+## 利用手順
+
+ `git clone` 　後 プロジェクトファイル直下で
+ 
+ ```
+ npm install
+ ```
+
+firebaseを利用して匿名ログインを実現させているので、プロジェクトを作成して`google-services.json`を任意の場所に保存する。
