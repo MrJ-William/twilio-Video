@@ -5,7 +5,7 @@ import React, {useContext, useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import {AppStore} from '../hooks/AppStore';
-import {storage} from '../storages/Storage';
+import storage from '../storages/Storage';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';

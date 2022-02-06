@@ -2,7 +2,7 @@
  * ログイン画面
  */
 
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -17,12 +17,30 @@ import storage from '../storages/Storage';
 import {tailwind} from '../tailwind';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
+import auth from '@react-native-firebase/auth';
 
 const LoginScreen = ({navigation}) => {
   //ログイン認証用State
   const {state, dispatch} = useContext(AppStore);
   //バリデート関連用State
   const [store, dispatch_store] = useLoginReducer();
+
+  //   // Set an initializing state whilst Firebase connects
+  //   const [initializing, setInitializing] = useState(true);
+  //   const [user, setUser] = useState();
+
+  //   // Handle user state changes
+  //   function onAuthStateChanged(user) {
+  //     setUser(user);
+  //     if (initializing) setInitializing(false);
+  //   }
+
+  //   useEffect(() => {
+  //     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+  //     return subscriber; // unsubscribe on unmount
+  //   }, []);
+
+  //   if (initializing) return null;
 
   const loadStorage = async () => {
     try {
@@ -51,11 +69,21 @@ const LoginScreen = ({navigation}) => {
   }, []);
 
   //login function
-  const fetchData = async (password: string) => {
+  const fetchData = (password: string) => {
     try {
-      //login 処理
-      //匿名ログイン処理
-      //firebase
+      //firebase signInAnonymously
+      auth()
+        .signInAnonymously()
+        .then(() => {
+          console.log('User signed in anonymously');
+        })
+        .catch(error => {
+          if (error.code === 'auth/operation-not-allowed') {
+            console.log('Enable anonymous in your firebase console.');
+          }
+
+          console.error(error);
+        });
     } catch (error) {
       console.log('ログイン失敗:', error);
       dispatch({
