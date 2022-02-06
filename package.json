@@ -24,8 +24,7 @@
     "react-native-storage": "^1.0.1",
     "react-native-twilio-video-webrtc": "^2.0.0",
     "react-native-vector-icons": "^9.0.0",
-    "tailwind-rn": "^4.1.0",
-    "tailwindcss": "^3.0.18"
+    "tailwind-rn": "3.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -34,11 +33,13 @@
     "@types/react": "^17.0.39",
     "@types/react-native": "^0.66.15",
     "babel-jest": "^26.6.3",
+    "concurrently": "^7.0.0",
     "eslint": "7.14.0",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.66.2",
     "postcss": "^8.4.6",
-    "react-test-renderer": "17.0.2"
+    "react-test-renderer": "17.0.2",
+    "tailwindcss": "^3.0.18"
   },
   "jest": {
     "preset": "react-native"

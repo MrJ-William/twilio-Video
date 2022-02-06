@@ -1,0 +1,11 @@
+{
+	"underline": {
+		"textDecorationLine": "underline"
+	},
+	"line-through": {
+		"textDecorationLine": "line-through"
+	},
+	"no-underline": {
+		"textDecorationLine": "none"
+	}
+}
