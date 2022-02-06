@@ -23,6 +23,53 @@ const VideoChatScreen = () => {
   const [intervalId, setIntervalId] = useState<number>();
   const [laps, setLaps] = useState<number[]>([]);
 
+  const _onEndButtonPress = () => {
+    console.log('onEndButtonPress: ');
+    twilioRef.current.disconnect();
+
+    hangup();
+  };
+
+  const _onMuteButtonPress = () => {
+    console.log('onMuteButtonPress: ');
+    twilioRef.current
+      .setLocalAudioEnabled(!isAudioEnabled)
+      .then(isEnabled => setIsAudioEnabled(isEnabled));
+
+    setOnMute();
+  };
+
+  const _onDominantSpeakerDidChange = () => {
+    console.log('onDominantSpeakerDidChange: ');
+    twilioRef.current.toggleSoundSetup(!isSpeaker);
+    setIsSpeaker(!isSpeaker);
+  };
+
+  const _onLocalVideoEnabled = () => {
+    console.log('onLocalVideoEnabled: ');
+    twilioRef.current
+      .setLocalVideoEnabled(!isVideoEnabled)
+      .then(isEnabled => setIsVideoEnabled(isEnabled));
+  };
+
+  const hangup = () => {
+    dispatch({
+      type: 'CHENGE_CALL_SETTEING',
+      payload: {
+        hangup: true,
+      },
+    });
+  };
+
+  const setOnMute = () => {
+    dispatch({
+      type: 'CHENGE_CALL_SETTEING',
+      payload: {
+        setOnMute: !state.callSetting?.setOnMute,
+      },
+    });
+  };
+
   return (
     <View>
       <TwilioVideoParticipantView
