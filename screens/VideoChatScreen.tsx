@@ -52,6 +52,49 @@ const VideoChatScreen = () => {
       .then(isEnabled => setIsVideoEnabled(isEnabled));
   };
 
+  const _onRoomDidConnect = ({roomName, error}) => {
+    console.log('onRoomDidConnect: ', roomName);
+
+    console.log('接続完了時');
+    setStatus('connected');
+    console.log(status);
+  };
+
+  const _onRoomDidDisconnect = ({roomName, error}) => {
+    console.log('[Disconnect]ERROR: ', error);
+
+    setStatus('disconnected');
+  };
+
+  const _onRoomDidFailToConnect = error => {
+    console.log('[FailToConnect]ERROR: ', error);
+
+    setStatus('disconnected');
+  };
+
+  const _onParticipantAddedVideoTrack = ({participant, track}) => {
+    console.log('onParticipantAddedVideoTrack: ', participant, track);
+
+    setVideoTracks(
+      new Map([
+        ...videoTracks,
+        [
+          track.trackSid,
+          {participantSid: participant.sid, videoTrackSid: track.trackSid},
+        ],
+      ]),
+    );
+  };
+
+  const _onParticipantRemovedVideoTrack = ({participant, track}) => {
+    console.log('onParticipantRemovedVideoTrack: ', participant, track);
+
+    const videoTracksLocal = videoTracks;
+    videoTracksLocal.delete(track.trackSid);
+
+    setVideoTracks(videoTracksLocal);
+  };
+
   const hangup = () => {
     dispatch({
       type: 'CHENGE_CALL_SETTEING',
