@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "167739969274",
+    "project_id": "twilio-video-ec60e",
+    "storage_bucket": "twilio-video-ec60e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:167739969274:android:66eb99d670769197b24343",
+        "android_client_info": {
+          "package_name": "com.twiliovideo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "167739969274-csfe825ikl4p8a2gkuek6dvvf78n4qcu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCf6YrOv0HjriLMG3TN8NO8BPUXg-5Eykc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "167739969274-csfe825ikl4p8a2gkuek6dvvf78n4qcu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
