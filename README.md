@@ -21,7 +21,7 @@ Twilioを利用したビデオ通話アプリケーション
 #### Twilioでの実装方法
 
 ##### 今回使用したもの
-○ WebRTC Go Room を使用
+* WebRTC Go Room を使用
 
 ##### Room作成方法
 ```html
