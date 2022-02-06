@@ -1,3 +1,4 @@
+import React, {useState, useRef, useContext, useEffect} from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
 import {
   TwilioVideo,
@@ -9,6 +10,19 @@ import {tailwind} from '../tailwind';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const VideoChatScreen = () => {
+  // state setting
+  const {state, dispatch} = useContext(AppStore);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isSpeaker, setIsSpeaker] = useState(false);
+  const [status, setStatus] = useState('disconnected');
+  const [videoTracks, setVideoTracks] = useState(new Map());
+  const twilioRef = useRef(null);
+  const [now, setNow] = useState(0);
+  const [start, setStart] = useState(0);
+  const [intervalId, setIntervalId] = useState<number>();
+  const [laps, setLaps] = useState<number[]>([]);
+
   return (
     <View>
       <TwilioVideoParticipantView
