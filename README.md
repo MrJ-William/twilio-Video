@@ -43,5 +43,31 @@ createLocalVideoTrack().then(track => {
 });
 ```
 
+### Android Studio
+##### Android Studio 公式
+> `https://developer.android.com/studio`
+
+1. React Native アプリケーションを Android エミュレータで動作させるには、ADV（Android Virtual Device）をインストールする必要があります。
+メニューの「Tools」 > 「AVD Manager」を開いて、任意の Android デバイス（ここでは「Pixel 2 API 29」）を追加してください。
+
+2. 「Actions」の「▶️（起動ボタン）」を押して、Android エミュレータを起動します。
+
+3. Android SDK を PATH に追加するために、~/.bash_profile を開いて、次の記述を追加してください。
+```html
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
+
+4. ~/.bash_profile の設定を反映します。
+```html
+$ source ~/.bash_profile
+```
+
+5. React Native アプリケーションを Android で起動します。
+```html
+$ npx react-native run-android
+```
 
 
