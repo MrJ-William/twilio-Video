@@ -1,0 +1,273 @@
+import React, {useState, useRef, useContext, useEffect} from 'react';
+import {Text, View, TouchableOpacity} from 'react-native';
+import {
+  TwilioVideo,
+  TwilioVideoLocalView,
+  TwilioVideoParticipantView,
+} from 'react-native-twilio-video-webrtc';
+
+import {tailwind} from '../tailwind';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const VideoChatScreen = () => {
+  // state setting
+  const {state, dispatch} = useContext(AppStore);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isSpeaker, setIsSpeaker] = useState(false);
+  const [status, setStatus] = useState('disconnected');
+  const [videoTracks, setVideoTracks] = useState(new Map());
+  const twilioRef = useRef(null);
+  const [now, setNow] = useState(0);
+  const [start, setStart] = useState(0);
+  const [intervalId, setIntervalId] = useState<number>();
+  const [laps, setLaps] = useState<number[]>([]);
+
+  const _onEndButtonPress = () => {
+    console.log('onEndButtonPress: ');
+    twilioRef.current.disconnect();
+
+    hangup();
+  };
+
+  const _onMuteButtonPress = () => {
+    console.log('onMuteButtonPress: ');
+    twilioRef.current
+      .setLocalAudioEnabled(!isAudioEnabled)
+      .then(isEnabled => setIsAudioEnabled(isEnabled));
+
+    setOnMute();
+  };
+
+  const _onDominantSpeakerDidChange = () => {
+    console.log('onDominantSpeakerDidChange: ');
+    twilioRef.current.toggleSoundSetup(!isSpeaker);
+    setIsSpeaker(!isSpeaker);
+  };
+
+  const _onLocalVideoEnabled = () => {
+    console.log('onLocalVideoEnabled: ');
+    twilioRef.current
+      .setLocalVideoEnabled(!isVideoEnabled)
+      .then(isEnabled => setIsVideoEnabled(isEnabled));
+  };
+
+  const _onRoomDidConnect = ({roomName, error}) => {
+    console.log('onRoomDidConnect: ', roomName);
+
+    console.log('接続完了時');
+    setStatus('connected');
+    console.log(status);
+  };
+
+  const _onRoomDidDisconnect = ({roomName, error}) => {
+    console.log('[Disconnect]ERROR: ', error);
+
+    setStatus('disconnected');
+  };
+
+  const _onRoomDidFailToConnect = error => {
+    console.log('[FailToConnect]ERROR: ', error);
+
+    setStatus('disconnected');
+  };
+
+  const _onParticipantAddedVideoTrack = ({participant, track}) => {
+    console.log('onParticipantAddedVideoTrack: ', participant, track);
+
+    setVideoTracks(
+      new Map([
+        ...videoTracks,
+        [
+          track.trackSid,
+          {participantSid: participant.sid, videoTrackSid: track.trackSid},
+        ],
+      ]),
+    );
+  };
+
+  const _onParticipantRemovedVideoTrack = ({participant, track}) => {
+    console.log('onParticipantRemovedVideoTrack: ', participant, track);
+
+    const videoTracksLocal = videoTracks;
+    videoTracksLocal.delete(track.trackSid);
+
+    setVideoTracks(videoTracksLocal);
+  };
+
+  const hangup = () => {
+    dispatch({
+      type: 'CHENGE_CALL_SETTEING',
+      payload: {
+        hangup: true,
+      },
+    });
+  };
+
+  const setOnMute = () => {
+    dispatch({
+      type: 'CHENGE_CALL_SETTEING',
+      payload: {
+        setOnMute: !state.callSetting?.setOnMute,
+      },
+    });
+  };
+
+  // twilioVideo connect
+  useEffect(() => {
+    if (!state.twilio?.token) {
+      twilioRef.current.connect({
+        roomName: state.twilio?.roomName,
+        accessToken: state.twilio?.token,
+        cameraType: 'front',
+      });
+
+      setStatus('connecting');
+      console.log(status);
+    }
+  }, []);
+
+  // start Timer
+  useEffect(() => {
+    handleStart();
+  }, []);
+
+  // reset Timer
+  useEffect(() => {
+    // component will unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const handleStart = () => {
+    const id = setInterval(() => {
+      setNow(new Date().getTime());
+    }, 100);
+    setIntervalId(id);
+    setStart(new Date().getTime());
+    setLaps([0]);
+  };
+
+  const Timer = ({interval}: any) => {
+    const pad = (n: number) => (n < 10 ? '0' + n : n);
+    const duration = new Date(interval);
+
+    return (
+      <View>
+        <View
+          style={tailwind(
+            ' flex flex-row justify-center items-center top-0 left-10 right-0',
+          )}>
+          <Text style={tailwind(' text-white font-bold text-lg text-center')}>
+            {pad(duration.getMinutes())}
+            {':'}
+          </Text>
+          <Text style={tailwind(' text-white font-bold text-lg text-center')}>
+            {pad(duration.getSeconds())}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <View>
+      <TwilioVideoParticipantView
+        style={tailwind(
+          'h-full flex justify-center items-center bg-gray-900 p-8 ',
+        )}
+      />
+      <View style={tailwind('absolute top-0 left-20 right-0 pt-16 ')}>
+        <View
+          style={tailwind(
+            'absolute top-0 left-10 right-0 pt-16 text-white font-bold text-lg text-center',
+          )}>
+          <Text>
+            <Timer
+              interval={
+                laps.reduce((prev, curr) => prev + curr, 0) + now - start
+              }
+            />
+          </Text>
+        </View>
+      </View>
+
+      <View style={tailwind('absolute bottom-0 left-0 right-0 px-10')}>
+        <TouchableOpacity
+          style={tailwind(
+            'py-2 bg-white bg-opacity-50 rounded-lg border-2 border-white',
+          )}
+          onPress={() =>
+            //本番用
+            //   unlocking()
+            console.log('鍵の開錠')
+          }>
+          <Text style={tailwind('text-lg font-bold text-white text-center')}>
+            鍵を開ける
+          </Text>
+        </TouchableOpacity>
+
+        <View
+          style={tailwind('flex flex-row justify-around items-center my-6')}>
+          <TouchableOpacity
+            style={tailwind(
+              'w-16 h-16 rounded-full border-2 border-white flex justify-center items-center ',
+            )}
+            onPress={_onDominantSpeakerDidChange}>
+            <Icon
+              name="volume-up"
+              size={35}
+              style={tailwind(`${isSpeaker ? 'text-red-600' : 'text-white'}`)}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={tailwind(
+              'w-16 h-16 rounded-full border-2 border-white flex justify-center items-center ',
+            )}
+            onPress={_onLocalVideoEnabled}>
+            <Icon
+              name={`${isVideoEnabled ? 'videocam' : 'videocam-off'}`}
+              size={35}
+              style={tailwind(
+                `${isVideoEnabled ? 'text-white' : 'text-red-600'}`,
+              )}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={tailwind(
+              'w-16 h-16 rounded-full border-2 border-white flex justify-center items-center ',
+            )}
+            onPress={_onMuteButtonPress}>
+            <Icon
+              name="mic-off"
+              size={35}
+              style={tailwind(
+                `${isAudioEnabled ? 'text-white' : 'text-red-600'}`,
+              )}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={tailwind('flex justify-around items-center mb-12')}>
+          <TouchableOpacity
+            style={tailwind(
+              'flex justify-center items-center w-16 h-16 rounded-full shadow-origin bg-red-500',
+            )}
+            onPress={_onEndButtonPress}>
+            <Icon name="call-end" size={35} style={tailwind('text-white')} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <TwilioVideo
+        ref={twilioRef}
+        onRoomDidConnect={_onRoomDidConnect}
+        onRoomDidDisconnect={_onRoomDidDisconnect}
+        onRoomDidFailToConnect={_onRoomDidFailToConnect}
+        onParticipantAddedVideoTrack={_onParticipantAddedVideoTrack}
+        onParticipantRemovedVideoTrack={_onParticipantRemovedVideoTrack}
+      />
+    </View>
+  );
+};
+
+export default VideoChatScreen;
